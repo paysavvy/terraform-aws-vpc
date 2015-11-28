@@ -6,10 +6,16 @@ provider "aws" {
 
 resource "aws_vpc" "gastown-test" {
 	cidr_block = "10.0.0.0/16"
+	tags {
+	  Name = "gastown-test"
+	}
 }
 
 resource "aws_internet_gateway" "gastown-test" {
 	vpc_id = "${aws_vpc.gastown-test.id}"
+	tags {
+	  Name = "gastown-test"
+	}
 }
 
 # NAT instance
@@ -17,6 +23,9 @@ resource "aws_internet_gateway" "gastown-test" {
 resource "aws_security_group" "nat" {
 	name = "nat"
 	description = "Allow services from the private subnet through NAT"
+	tags {
+	  Name = "gastown-test-nat"
+	}
 
 	ingress {
 		from_port = 0
@@ -43,6 +52,9 @@ resource "aws_instance" "nat" {
 	subnet_id = "${aws_subnet.us-west-2b-public.id}"
 	associate_public_ip_address = true
 	source_dest_check = false
+	tags {
+	  Name = "gastown-test-nat"
+	}
 }
 
 resource "aws_eip" "nat" {
@@ -57,6 +69,9 @@ resource "aws_subnet" "us-west-2b-public" {
 
 	cidr_block = "10.0.0.0/24"
 	availability_zone = "us-west-2b"
+	tags {
+	  Name = "gastown-test-2b-public"
+	}
 }
 
 resource "aws_subnet" "us-west-2c-public" {
@@ -64,6 +79,9 @@ resource "aws_subnet" "us-west-2c-public" {
 
 	cidr_block = "10.0.2.0/24"
 	availability_zone = "us-west-2c"
+	tags {
+	  Name = "gastown-test-2c-public"
+	}
 }
 
 # Routing table for public subnets
@@ -74,6 +92,9 @@ resource "aws_route_table" "us-west-2-public" {
 	route {
 		cidr_block = "0.0.0.0/0"
 		gateway_id = "${aws_internet_gateway.gastown-test.id}"
+	}
+	tags {
+	  Name = "gastown-test-public"
 	}
 }
 
@@ -94,6 +115,9 @@ resource "aws_subnet" "us-west-2b-private" {
 
 	cidr_block = "10.0.1.0/24"
 	availability_zone = "us-west-2b"
+	tags {
+	  Name = "gastown-test-2b-private"
+	}
 }
 
 resource "aws_subnet" "us-west-2c-private" {
@@ -101,6 +125,9 @@ resource "aws_subnet" "us-west-2c-private" {
 
 	cidr_block = "10.0.3.0/24"
 	availability_zone = "us-west-2c"
+	tags {
+	  Name = "gastown-test-2c-private"
+	}	
 }
 
 # Routing table for private subnets
@@ -111,6 +138,9 @@ resource "aws_route_table" "us-west-2-private" {
 	route {
 		cidr_block = "0.0.0.0/0"
 		instance_id = "${aws_instance.nat.id}"
+	}
+	tags {
+	  Name = "gastown-test-private"
 	}
 }
 
@@ -129,6 +159,9 @@ resource "aws_route_table_association" "us-west-2c-private" {
 resource "aws_security_group" "bastion" {
 	name = "bastion"
 	description = "Allow SSH traffic from the internet"
+	tags {
+	  Name = "gastown-test-bastion"
+	}
 
 	ingress {
 		from_port = 22
@@ -147,6 +180,9 @@ resource "aws_instance" "bastion" {
 	key_name = "${var.aws_key_name}"
 	security_groups = ["${aws_security_group.bastion.id}"]
 	subnet_id = "${aws_subnet.us-west-2b-public.id}"
+	tags {
+	  Name = "gastown-test-bastion"
+	}
 }
 
 resource "aws_eip" "bastion" {
