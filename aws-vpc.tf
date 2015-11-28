@@ -54,6 +54,9 @@ resource "aws_instance" "nat" {
 	source_dest_check = false
 	tags {
 	  Name = "gastown-test-nat"
+	  Test = "true"
+	  Subnet = "2b-public"
+	  Cluster = "gastown-test"
 	}
 }
 
@@ -182,6 +185,9 @@ resource "aws_instance" "bastion" {
 	subnet_id = "${aws_subnet.us-west-2b-public.id}"
 	tags {
 	  Name = "gastown-test-bastion"
+	  Test = "true"
+	  Subnet = "2b-public"
+	  Cluster = "gastown-test"
 	}
 }
 
