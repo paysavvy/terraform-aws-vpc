@@ -8,14 +8,15 @@ variable "aws_nat_ami" {
 variable "aws_ubuntu_ami" {
 	default = "ami-d5c5d1e5"
 }
-
 variable "containers_ami" {
   default = "ami-c188b0f1"
 }
-
 variable "ecs_instance_role" {
   default = "arn:aws:iam::646783328994:role/ecsInstanceRole"
 }
 variable "ecs_service_role" {
   default = "arn:aws:iam::646783328994:role/ecsServiceRole"
+}
+variable "environment" {
+  default = "staging"
 }
